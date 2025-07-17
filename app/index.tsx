@@ -4,7 +4,7 @@ import {
 } from "@crossmint/client-sdk-react-native-ui";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Device from "expo-device";
+import { Platform } from "react-native";
 
 const apiKey = process.env.EXPO_PUBLIC_CLIENT_CROSSMINT_API_KEY ?? "";
 if (!apiKey) {
@@ -32,8 +32,8 @@ export default function App() {
                 enabled: true,
                 allowedMethods: {
                   card: true,
-                  applePay: ["iOS", "iPadOS"].includes(Device.osName as string),
-                  googlePay: Device.osName === "Android",
+                  applePay: Platform.OS === "ios",
+                  googlePay: Platform.OS === "android",
                 },
               },
               defaultMethod: "fiat",

@@ -47,6 +47,8 @@ A React Native Expo demo app showcasing Crossmint's embedded checkout functional
 
 Here's how the Crossmint React Native SDK is integrated:
 
+> **Note:** The `crypto` property needs to be disabled for the checkout to work. Currently, crypto payments are only available if using a [custom payer](https://docs.crossmint.com/payments/embedded/guides/custom-payer#custom-payer) (this limitation is for the mobile SDK only).
+
 ```tsx
 import {
   CrossmintEmbeddedCheckout,
@@ -55,12 +57,15 @@ import {
 
 export default function App() {
   return (
-    <CrossmintProvider apiKey={apiKey}>
+    <CrossmintProvider apiKey="your_client_side_api_key">
       <CrossmintEmbeddedCheckout
         recipient={{
           walletAddress: "EbXL4e6XgbcC7s33cD5EZtyn5nixRDsieBjPQB7zf448",
         }}
         payment={{
+          crypto: {
+            enabled: false,
+          },
           fiat: {
             enabled: true,
             allowedMethods: {
