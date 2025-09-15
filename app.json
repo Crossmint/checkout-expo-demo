@@ -32,7 +32,10 @@
           "backgroundColor": "#0e171b",
           "imageWidth": 100
         }
-      ]
+      ],
+      "expo-router",
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

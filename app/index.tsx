@@ -4,7 +4,6 @@ import {
 } from "@crossmint/client-sdk-react-native-ui";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Platform } from "react-native";
 
 const apiKey = process.env.EXPO_PUBLIC_CLIENT_CROSSMINT_API_KEY ?? "";
 if (!apiKey) {
@@ -30,17 +29,13 @@ export default function App() {
               },
               fiat: {
                 enabled: true,
-                allowedMethods: {
-                  card: true,
-                  applePay: Platform.OS === "ios",
-                  googlePay: Platform.OS === "android",
-                },
               },
               defaultMethod: "fiat",
+              receiptEmail: "hello@crossmint.com",
             }}
             lineItems={{
               tokenLocator:
-                "solana:6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
+                "solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu",
               executionParameters: {
                 mode: "exact-in",
                 amount: "1",
