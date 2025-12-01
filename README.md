@@ -1,104 +1,116 @@
 # Crossmint Checkout Expo Demo
 
-## Introduction
-
-A React Native Expo demo app showcasing Crossmint's embedded checkout functionality. This quickstart demonstrates how to integrate Crossmint's React Native SDK (`@crossmint/client-sdk-react-native-ui`) into mobile applications.
-
-## Key Features
-
-- Accept fiat payments via credit card, Apple Pay, and Google Pay
-- Memecoin purchase integration on Solana
-- Cross-platform support (iOS, Android, Web)
-- Embedded checkout component with customizable UI
-
-## Prerequisites
-
-- Create a developer account in the [Crossmint Console](https://staging.crossmint.com/)
-- Get your client-side API key from the console
+A React Native Expo demo showcasing Crossmint's embedded checkout for **Memecoin** and **Onramp** flows.
 
 ## Setup
 
-1. Clone and navigate to the project:
-
-   ```bash
-   git clone <repository-url>
-   cd checkout-expo-demo
-   ```
-
-2. Install dependencies:
+1. Install dependencies:
 
    ```bash
    pnpm install
    ```
 
-3. Set up environment variables:
+2. Set up environment variables:
 
    ```bash
-   EXPO_PUBLIC_CLIENT_CROSSMINT_API_KEY=your_api_key_here
+   EXPO_PUBLIC_CLIENT_CROSSMINT_API_KEY=your_client_api_key
    ```
 
-4. Start the development server:
+3. Start the app:
 
    ```bash
    pnpm start
    ```
 
-## Code Sample
+## Checkout Types
 
-Here's how the Crossmint React Native SDK is integrated:
+### 1. Memecoin Checkout
 
-> **Note:** The `crypto` property needs to be disabled for the checkout to work. Currently, crypto payments are only available if using a [custom payer](https://docs.crossmint.com/payments/embedded/guides/custom-payer#custom-payer) (this limitation is for the mobile SDK only).
+Purchase tokens directly with fiat. No server-side setup required.
 
 ```tsx
-import {
-  CrossmintEmbeddedCheckout,
-  CrossmintProvider,
-} from "@crossmint/client-sdk-react-native-ui";
-
-export default function App() {
-  return (
-    <CrossmintProvider apiKey="your_client_side_api_key">
-      <CrossmintEmbeddedCheckout
-        recipient={{
-          walletAddress: "EbXL4e6XgbcC7s33cD5EZtyn5nixRDsieBjPQB7zf448",
-        }}
-        payment={{
-          crypto: {
-            enabled: false,
-          },
-          fiat: {
-            enabled: true,
-            allowedMethods: {
-              card: true,
-              applePay: true,
-              googlePay: true,
-            },
-          },
-        }}
-        lineItems={{
-          tokenLocator: "solana:6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
-          executionParameters: {
-            mode: "exact-in",
-            amount: "1",
-            maxSlippageBps: "500",
-          },
-        }}
-      />
-    </CrossmintProvider>
-  );
-}
+<CrossmintEmbeddedCheckout
+  recipient={{
+    walletAddress: "EbXL4e6XgbcC7s33cD5EZtyn5nixRDsieBjPQB7zf448",
+  }}
+  payment={{
+    crypto: { enabled: false },
+    fiat: { enabled: true },
+    receiptEmail: "user@example.com",
+  }}
+  lineItems={{
+    tokenLocator: "solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu",
+    executionParameters: {
+      mode: "exact-in",
+      amount: "1",
+      maxSlippageBps: "500",
+    },
+  }}
+/>
 ```
 
-## Available Scripts
+### 2. Onramp Checkout (Headless)
 
-- `pnpm start` - Start Expo development server
-- `pnpm ios` - Run on iOS simulator
-- `pnpm android` - Run on Android emulator
-- `pnpm web` - Run in web browser
+For onramp, create the order server-side first, then use the embedded checkout.
 
-## Advanced Usage
+#### Step 1: Create Order (Server-side)
 
-For advanced usage, refer to the [Crossmint documentation](https://docs.crossmint.com/):
+```bash
+curl --request POST \
+  --url https://staging.crossmint.com/api/2022-06-09/orders \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: YOUR_SERVER_API_KEY' \
+  --data '{
+    "lineItems": [
+      {
+        "tokenLocator": "solana:4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        "executionParameters": {
+          "mode": "exact-in",
+          "amount": "5"
+        }
+      }
+    ],
+    "payment": {
+      "method": "card",
+      "receiptEmail": "user@example.com"
+    },
+    "recipient": {
+      "walletAddress": "user-wallet-address"
+    }
+  }'
+```
 
-- [Payment Methods](https://docs.crossmint.com/payments/embedded/guides/payment-methods)
+**Staging USDC Token Addresses:**
+| Chain  | Address |
+|--------|---------|
+| Solana | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` |
+| Base   | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` |
+
+#### Step 2: Use Embedded Checkout (Client-side)
+
+Pass the `orderId` and `clientSecret` from the order response:
+
+```tsx
+<CrossmintEmbeddedCheckout
+  orderId={orderId}
+  clientSecret={clientSecret}
+  payment={{
+    receiptEmail: "user@example.com",
+    crypto: { enabled: false },
+    fiat: { enabled: true },
+  }}
+/>
+```
+
+## API Keys
+
+You need two API keys from the [Crossmint Console](https://staging.crossmint.com/):
+
+- **Client-side API key** - For the embedded checkout component
+- **Server-side API key** - For creating orders (scopes: `orders.create`, `orders.read`)
+
+## Resources
+
+- [React Native Onramp Quickstart](https://docs.crossmint.com/stablecoin-orchestration/onramp/quickstarts/react-native)
+- [Payment Methods Guide](https://docs.crossmint.com/payments/embedded/guides/payment-methods)
 - [UI Customization](https://docs.crossmint.com/payments/embedded/guides/ui-customization)
