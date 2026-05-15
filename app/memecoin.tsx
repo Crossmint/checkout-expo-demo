@@ -21,7 +21,7 @@ export default function MemecoinCheckout() {
         <CrossmintProvider apiKey={apiKey}>
           <CrossmintEmbeddedCheckout
             recipient={{
-              walletAddress: "EbXL4e6XgbcC7s33cD5EZtyn5nixRDsieBjPQB7zf448",
+              walletAddress: "0xa064b2E2B6f9CEaC2c60a81369aeC35C0FBe467F",
             }}
             payment={{
               crypto: {
@@ -35,7 +35,7 @@ export default function MemecoinCheckout() {
             }}
             lineItems={{
               tokenLocator:
-                "solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu",
+                "base-sepolia:0xc845b7acbcfd132f5b60b39a37683ff734231500",
               executionParameters: {
                 mode: "exact-in",
                 amount: "1",
